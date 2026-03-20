@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "ffmpeg",
+    "name": "ffmpeg",
+    "description": "FFmpeg integration for AgentWFY — spawn processes with streaming output via event bus",
+    "version": "1.0.0",
+    "author": "endenwer",
+    "repository": "https://github.com/AgentWFY/ffmpeg-plugin",
+    "license": "MIT",
+    "download_url": "https://github.com/AgentWFY/ffmpeg-plugin/releases/download/v1.0.0/ffmpeg.plugins.awfy"
+  }
+]
