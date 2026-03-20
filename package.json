@@ -1,0 +1,12 @@
+{
+  "name": "agentwfy-plugins",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "process-plugin": "npx tsx scripts/process-plugin.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}

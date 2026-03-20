@@ -1,0 +1,13 @@
+name: Update Plugin
+description: Update an existing plugin in the AgentWFY registry
+title: "Update: "
+labels: ["update"]
+body:
+  - type: input
+    id: download_url
+    attributes:
+      label: Download URL
+      description: URL to your updated .plugins.awfy package (GitHub Release asset)
+      placeholder: https://github.com/you/your-plugin/releases/latest/download/plugin.plugins.awfy
+    validations:
+      required: true

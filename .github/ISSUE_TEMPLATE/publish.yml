@@ -1,0 +1,13 @@
+name: Publish Plugin
+description: Submit a plugin to the AgentWFY registry
+title: "Publish: "
+labels: ["publish"]
+body:
+  - type: input
+    id: download_url
+    attributes:
+      label: Download URL
+      description: URL to your .plugins.awfy package (GitHub Release asset)
+      placeholder: https://github.com/you/your-plugin/releases/latest/download/plugin.plugins.awfy
+    validations:
+      required: true

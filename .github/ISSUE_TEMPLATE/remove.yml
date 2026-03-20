@@ -1,0 +1,20 @@
+name: Remove Plugin
+description: Request removal of a plugin from the AgentWFY registry
+title: "Remove: "
+labels: ["remove"]
+body:
+  - type: input
+    id: plugin_name
+    attributes:
+      label: Plugin Name
+      description: The exact name of the plugin to remove (as it appears in the registry)
+      placeholder: my-plugin
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason
+      description: Why should this plugin be removed?
+    validations:
+      required: true
