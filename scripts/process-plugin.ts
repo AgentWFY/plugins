@@ -1,6 +1,7 @@
-import { execSync } from 'child_process'
+import { execFileSync, execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 import { DatabaseSync } from 'node:sqlite'
 
 const ACCEPTED_LICENSES = [
@@ -19,15 +20,29 @@ interface PluginEntry {
   download_url: string
 }
 
-function gh(args: string): string {
-  return execSync(`gh ${args}`, { encoding: 'utf-8' }).trim()
+interface PluginRow {
+  name: string
+  description: string
+  version: string
+  author: string | null
+  repository: string | null
+  license: string | null
+}
+
+function gh(args: string[]): string {
+  return execFileSync('gh', args, { encoding: 'utf-8' }).trim()
 }
 
 function commentAndClose(issueNumber: string, body: string, label: string): void {
-  const escaped = body.replace(/'/g, "'\\''")
-  gh(`issue comment ${issueNumber} --body '${escaped}'`)
-  gh(`issue edit ${issueNumber} --add-label "${label}"`)
-  gh(`issue close ${issueNumber}`)
+  const tmpFile = path.join(os.tmpdir(), `gh-comment-${issueNumber}.md`)
+  fs.writeFileSync(tmpFile, body)
+  try {
+    gh(['issue', 'comment', issueNumber, '--body-file', tmpFile])
+  } finally {
+    fs.unlinkSync(tmpFile)
+  }
+  gh(['issue', 'edit', issueNumber, '--add-label', label])
+  gh(['issue', 'close', issueNumber])
 }
 
 function commentError(issueNumber: string, errors: string[]): void {
@@ -40,11 +55,12 @@ function parseIssueField(body: string, fieldId: string): string {
   const lines = body.split('\n')
   let capture = false
   const values: string[] = []
+  const normalizedId = fieldId.toLowerCase().replace(/[_\s]+/g, '_')
   for (const line of lines) {
     if (line.startsWith('### ')) {
       if (capture) break
-      const heading = line.replace('### ', '').trim().toLowerCase().replace(/\s+/g, '_')
-      if (heading === fieldId || heading === fieldId.replace(/_/g, ' ')) {
+      const heading = line.replace('### ', '').trim().toLowerCase().replace(/[_\s]+/g, '_')
+      if (heading === normalizedId) {
         capture = true
         continue
       }
@@ -59,7 +75,6 @@ async function main() {
   const issueNumber = process.env.ISSUE_NUMBER!
   const issueBody = process.env.ISSUE_BODY!
   const issueLabels: string[] = JSON.parse(process.env.ISSUE_LABELS || '[]')
-  const issueTitle = process.env.ISSUE_TITLE || ''
 
   const isPublish = issueLabels.includes('publish')
   const isUpdate = issueLabels.includes('update')
@@ -86,9 +101,9 @@ async function main() {
     }
     index.splice(idx, 1)
     fs.writeFileSync(indexPath, JSON.stringify(index, null, 2) + '\n')
-    execSync('git add index.json')
-    execSync(`git commit -m "Remove plugin: ${pluginName}"`)
-    execSync('git push')
+    execFileSync('git', ['add', 'index.json'])
+    execFileSync('git', ['commit', '-m', `Remove plugin: ${pluginName}`])
+    execFileSync('git', ['push'])
     commentAndClose(issueNumber, `Plugin \`${pluginName}\` has been removed from the registry.`, 'removed')
     return
   }
@@ -101,9 +116,9 @@ async function main() {
   }
 
   // Download the package
-  const tmpPath = '/tmp/plugin.plugins.awfy'
+  const tmpPath = path.join(os.tmpdir(), 'plugin.plugins.awfy')
   try {
-    execSync(`curl -fSL -o ${tmpPath} '${downloadUrl}'`, { timeout: 30_000 })
+    execFileSync('curl', ['-fSL', '-o', tmpPath, downloadUrl], { timeout: 30_000 })
   } catch {
     commentError(issueNumber, [`Failed to download package from: ${downloadUrl}`])
     return
@@ -111,17 +126,17 @@ async function main() {
 
   // Open as SQLite and extract metadata
   const errors: string[] = []
-  let pluginData: { name: string; description: string; version: string; author: string | null; repository: string | null; license: string | null } | null = null
+  let pluginData: PluginRow | null = null
 
   try {
     const db = new DatabaseSync(tmpPath)
     try {
-      let rows: any[]
+      let rows: PluginRow[]
       try {
-        rows = db.prepare('SELECT name, description, version, author, repository, license FROM plugins').all()
+        rows = db.prepare('SELECT name, description, version, author, repository, license FROM plugins').all() as PluginRow[]
       } catch {
-        rows = db.prepare('SELECT name, description, version FROM plugins').all()
-        rows = rows.map((r: any) => ({ ...r, author: null, repository: null, license: null }))
+        const basic = db.prepare('SELECT name, description, version FROM plugins').all() as Array<{ name: string; description: string; version: string }>
+        rows = basic.map(r => ({ ...r, author: null, repository: null, license: null }))
       }
 
       if (rows.length === 0) {
@@ -129,7 +144,7 @@ async function main() {
       } else if (rows.length > 1) {
         errors.push('Registry only supports single-plugin packages.')
       } else {
-        pluginData = rows[0] as typeof pluginData
+        pluginData = rows[0]
       }
     } finally {
       db.close()
@@ -194,12 +209,12 @@ async function main() {
   }
 
   fs.writeFileSync(indexPath, JSON.stringify(index, null, 2) + '\n')
-  execSync('git config user.name "github-actions[bot]"')
-  execSync('git config user.email "github-actions[bot]@users.noreply.github.com"')
-  execSync('git add index.json')
+  execFileSync('git', ['config', 'user.name', 'github-actions[bot]'])
+  execFileSync('git', ['config', 'user.email', 'github-actions[bot]@users.noreply.github.com'])
+  execFileSync('git', ['add', 'index.json'])
   const action = isUpdate ? 'Update' : 'Publish'
-  execSync(`git commit -m "${action} plugin: ${data.name} v${data.version}"`)
-  execSync('git push')
+  execFileSync('git', ['commit', '-m', `${action} plugin: ${data.name} v${data.version}`])
+  execFileSync('git', ['push'])
 
   const summary = [
     `## Plugin ${action === 'Publish' ? 'Published' : 'Updated'}`,
