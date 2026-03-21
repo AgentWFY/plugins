@@ -18,6 +18,7 @@ interface PluginEntry {
   repository: string
   license: string
   download_url: string
+  github_user: string
 }
 
 interface PluginRow {
@@ -75,6 +76,7 @@ async function main() {
   const issueNumber = process.env.ISSUE_NUMBER!
   const issueBody = process.env.ISSUE_BODY!
   const issueLabels: string[] = JSON.parse(process.env.ISSUE_LABELS || '[]')
+  const issueAuthor = process.env.ISSUE_AUTHOR || ''
 
   const isPublish = issueLabels.includes('publish')
   const isUpdate = issueLabels.includes('update')
@@ -97,6 +99,11 @@ async function main() {
     const idx = index.findIndex(p => p.id === pluginName)
     if (idx === -1) {
       commentError(issueNumber, [`Plugin '${pluginName}' not found in registry.`])
+      return
+    }
+    const existing = index[idx]
+    if (issueAuthor !== existing.github_user) {
+      commentError(issueNumber, ['Only the original publisher can remove this plugin.'])
       return
     }
     index.splice(idx, 1)
@@ -180,6 +187,10 @@ async function main() {
   }
   if (isUpdate && existingIdx !== -1) {
     const existing = index[existingIdx]
+    if (issueAuthor !== existing.github_user) {
+      commentError(issueNumber, ['Only the original publisher can update this plugin.'])
+      return
+    }
     if (compareVersions(data.version, existing.version) <= 0) {
       errors.push(`Version ${data.version} is not newer than existing ${existing.version}.`)
     }
@@ -200,6 +211,7 @@ async function main() {
     repository: data.repository || '',
     license: data.license!,
     download_url: downloadUrl,
+    github_user: issueAuthor,
   }
 
   if (isUpdate) {

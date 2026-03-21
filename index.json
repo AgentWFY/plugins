@@ -7,6 +7,7 @@
     "author": "endenwer",
     "repository": "https://github.com/AgentWFY/ffmpeg-plugin",
     "license": "MIT",
-    "download_url": "https://github.com/AgentWFY/ffmpeg-plugin/releases/download/v1.0.0/ffmpeg.plugins.awfy"
+    "download_url": "https://github.com/AgentWFY/ffmpeg-plugin/releases/download/v1.0.0/ffmpeg.plugins.awfy",
+    "github_user": "endenwer"
   }
 ]
