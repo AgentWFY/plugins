@@ -78,6 +78,11 @@ async function main() {
   const issueLabels: string[] = JSON.parse(process.env.ISSUE_LABELS || '[]')
   const issueAuthor = process.env.ISSUE_AUTHOR || ''
 
+  if (!issueLabels.includes('approved')) {
+    console.log('Missing "approved" label, skipping.')
+    return
+  }
+
   const isPublish = issueLabels.includes('publish')
   const isUpdate = issueLabels.includes('update')
   const isRemove = issueLabels.includes('remove')
