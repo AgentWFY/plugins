@@ -11,3 +11,11 @@ body:
       placeholder: https://github.com/you/your-plugin/releases/latest/download/plugin.plugins.awfy
     validations:
       required: true
+  - type: checkboxes
+    id: tags
+    attributes:
+      label: Tags
+      description: What does this plugin add?
+      options:
+        - label: providers
+        - label: functions

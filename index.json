@@ -8,7 +8,8 @@
     "repository": "https://github.com/AgentWFY/ffmpeg-plugin",
     "license": "MIT",
     "download_url": "https://github.com/AgentWFY/ffmpeg-plugin/releases/download/v1.0.0/ffmpeg.plugins.awfy",
-    "github_user": "endenwer"
+    "github_user": "endenwer",
+    "tags": ["functions"]
   },
   {
     "id": "anthropic-provider",
@@ -19,6 +20,7 @@
     "repository": "https://github.com/AgentWFY/anthropic-provider-plugin",
     "license": "MIT",
     "download_url": "https://github.com/AgentWFY/agentwfy-anthropic-provider/releases/download/v1.3.0/anthropic-provider.plugins.awfy",
-    "github_user": "endenwer"
+    "github_user": "endenwer",
+    "tags": ["providers"]
   }
 ]

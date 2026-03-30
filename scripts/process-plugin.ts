@@ -19,6 +19,7 @@ interface PluginEntry {
   license: string
   download_url: string
   github_user: string
+  tags: string[]
 }
 
 interface PluginRow {
@@ -206,6 +207,17 @@ async function main() {
     return
   }
 
+  // Parse tags from checkboxes
+  const tagsRaw = parseIssueField(issueBody, 'tags')
+  const parsedTags = tagsRaw.split('\n')
+    .filter(l => /\[x\]/i.test(l))
+    .map(l => l.replace(/.*\[x\]\s*/i, '').trim())
+    .filter(Boolean)
+  // On update, keep existing tags if none were checked
+  const tags = parsedTags.length > 0 || !isUpdate
+    ? parsedTags
+    : (index[existingIdx]?.tags ?? [])
+
   // Build the entry
   const entry: PluginEntry = {
     id: data.name,
@@ -217,6 +229,7 @@ async function main() {
     license: data.license!,
     download_url: downloadUrl,
     github_user: issueAuthor,
+    tags,
   }
 
   if (isUpdate) {
