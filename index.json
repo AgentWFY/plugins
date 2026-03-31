@@ -1,6 +1,5 @@
 [
   {
-    "id": "ffmpeg",
     "name": "ffmpeg",
     "title": "",
     "description": "FFmpeg integration for AgentWFY — spawn processes with streaming output via event bus",
@@ -15,7 +14,6 @@
     ]
   },
   {
-    "id": "anthropic-provider",
     "name": "anthropic-provider",
     "title": "Anthropic Pro/Max Subscription Provider",
     "description": "Provider for Claude Pro/Max subscriptions with streaming, extended thinking, and cache control",

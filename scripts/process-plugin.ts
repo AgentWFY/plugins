@@ -12,7 +12,6 @@ const ACCEPTED_LICENSES = [
 ]
 
 interface PluginEntry {
-  id: string
   name: string
   title: string
   description: string
@@ -106,7 +105,7 @@ async function main() {
       commentError(issueNumber, ['Plugin name is required.'])
       return
     }
-    const idx = index.findIndex(p => p.id === pluginName)
+    const idx = index.findIndex(p => p.name === pluginName)
     if (idx === -1) {
       commentError(issueNumber, [`Plugin '${pluginName}' not found in registry.`])
       return
@@ -195,7 +194,7 @@ async function main() {
     errors.push(`License '${data.license}' is not accepted. Accepted: ${ACCEPTED_LICENSES.join(', ')}`)
   }
 
-  const existingIdx = index.findIndex(p => p.id === data.name)
+  const existingIdx = index.findIndex(p => p.name === data.name)
 
   if (isPublish && existingIdx !== -1) {
     errors.push(`Plugin '${data.name}' already exists in the registry. Use "Update Plugin" instead.`)
@@ -232,7 +231,6 @@ async function main() {
 
   // Build the entry
   const entry: PluginEntry = {
-    id: data.name,
     name: data.name,
     title: data.title || '',
     description: data.description,
