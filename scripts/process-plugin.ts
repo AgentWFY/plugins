@@ -4,6 +4,8 @@ import path from 'path'
 import os from 'os'
 import { DatabaseSync } from 'node:sqlite'
 
+const PLUGIN_NAME_RE = /^[a-z0-9][a-z0-9-]*$/
+
 const ACCEPTED_LICENSES = [
   'MIT', 'Apache-2.0', 'GPL-2.0', 'GPL-3.0', 'LGPL-2.1', 'LGPL-3.0',
   'BSD-2-Clause', 'BSD-3-Clause', 'MPL-2.0', 'ISC', 'Unlicense', 'CC0-1.0',
@@ -174,6 +176,9 @@ async function main() {
   const data = pluginData!
   // Validate required fields
   if (!data.name?.trim()) errors.push('Missing required field: name')
+  if (data.name && !PLUGIN_NAME_RE.test(data.name)) {
+    errors.push(`Plugin name '${data.name}' must contain only lowercase letters, digits, and hyphens`)
+  }
   if (!data.description?.trim()) errors.push('Missing required field: description')
   if (!data.version?.trim()) errors.push('Missing required field: version')
   if (!data.author?.trim()) errors.push('Missing required field: author (add `author` column to your plugins table)')
