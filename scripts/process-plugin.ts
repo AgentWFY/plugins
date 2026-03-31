@@ -14,6 +14,7 @@ const ACCEPTED_LICENSES = [
 interface PluginEntry {
   id: string
   name: string
+  title: string
   description: string
   version: string
   author: string
@@ -26,6 +27,7 @@ interface PluginEntry {
 
 interface PluginRow {
   name: string
+  title: string
   description: string
   version: string
   author: string | null
@@ -148,10 +150,15 @@ async function main() {
     try {
       let rows: PluginRow[]
       try {
-        rows = db.prepare('SELECT name, description, version, author, repository, license FROM plugins').all() as PluginRow[]
+        rows = db.prepare('SELECT name, title, description, version, author, repository, license FROM plugins').all() as PluginRow[]
       } catch {
-        const basic = db.prepare('SELECT name, description, version FROM plugins').all() as Array<{ name: string; description: string; version: string }>
-        rows = basic.map(r => ({ ...r, author: null, repository: null, license: null }))
+        try {
+          const withoutTitle = db.prepare('SELECT name, description, version, author, repository, license FROM plugins').all() as Array<Omit<PluginRow, 'title'>>
+          rows = withoutTitle.map(r => ({ ...r, title: '' }))
+        } catch {
+          const basic = db.prepare('SELECT name, description, version FROM plugins').all() as Array<{ name: string; description: string; version: string }>
+          rows = basic.map(r => ({ ...r, title: '', author: null, repository: null, license: null }))
+        }
       }
 
       if (rows.length === 0) {
@@ -227,6 +234,7 @@ async function main() {
   const entry: PluginEntry = {
     id: data.name,
     name: data.name,
+    title: data.title || '',
     description: data.description,
     version: data.version,
     author: data.author!,
