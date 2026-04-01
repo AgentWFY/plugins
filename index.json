@@ -17,11 +17,11 @@
     "name": "anthropic-provider",
     "title": "Anthropic Pro/Max Subscription Provider",
     "description": "Provider for Claude Pro/Max subscriptions with streaming, extended thinking, and cache control",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "author": "endenwer",
     "repository": "https://github.com/AgentWFY/anthropic-provider-plugin",
     "license": "MIT",
-    "download_url": "https://github.com/AgentWFY/agentwfy-anthropic-provider/releases/download/v1.4.1/anthropic-provider.plugins.awfy",
+    "download_url": "https://github.com/AgentWFY/agentwfy-anthropic-provider/releases/download/v1.4.2/anthropic-provider.plugins.awfy",
     "github_user": "endenwer",
     "tags": [
       "providers"
