@@ -31,7 +31,7 @@
     "name": "terminal",
     "title": "Terminal",
     "description": "Terminal emulator for AgentWFY using @replit/ruspty with native resize support",
-    "version": "2.2.0",
+    "version": "3.0.0",
     "author": "endenwer",
     "repository": "github.com/agentwfy/agentwfy-terminal-plugin",
     "license": "MIT",
