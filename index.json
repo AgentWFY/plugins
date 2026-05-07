@@ -40,5 +40,19 @@
     "tags": [
       "functions"
     ]
+  },
+  {
+    "name": "brave-search",
+    "title": "",
+    "description": "Web search via Brave Search API",
+    "version": "1.0.3",
+    "author": "endenwer",
+    "repository": "https://github.com/AgentWFY/agentwfy-brave-search",
+    "license": "MIT",
+    "download_url": "https://github.com/AgentWFY/agentwfy-brave-search/releases/download/v1.0.3/brave-search.plugins.awfy",
+    "github_user": "endenwer",
+    "tags": [
+      "functions"
+    ]
   }
 ]
